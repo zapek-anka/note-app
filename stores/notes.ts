@@ -37,8 +37,46 @@ export const useNotesStore = defineStore('notes', () => {
         persist()
     }
 
+    const getNoteById = (id: string): Note | undefined => {
+        return notes.value.find(n => n.id === id)
+    }
+
     const persist = () => {
         saveState({ schemaVersion: 1, notes: notes.value })
+    }
+
+    const addTodo = (noteId: string, text: string) => {
+        const note = notes.value.find(n => n.id === noteId)
+        if (!note) return
+        note.todos.push({ id: crypto.randomUUID(), text, checked: false })
+        note.updatedAt = Date.now()
+        persist()
+    }
+
+    const removeTodo = (noteId: string, todoId: string) => {
+        const note = notes.value.find(n => n.id === noteId)
+        if (!note) return
+        note.todos = note.todos.filter(t => t.id !== todoId)
+        note.updatedAt = Date.now()
+        persist()
+    }
+
+    const toggleTodo = (noteId: string, todoId: string) => {
+        const note = notes.value.find(n => n.id === noteId)
+        const todo = note?.todos.find(t => t.id === todoId)
+        if (!todo) return
+        todo.checked = !todo.checked
+        note!.updatedAt = Date.now()
+        persist()
+    }
+
+    const editTodoText = (noteId: string, todoId: string, text: string) => {
+        const note = notes.value.find(n => n.id === noteId)
+        const todo = note?.todos.find(t => t.id === todoId)
+        if (!todo) return
+        todo.text = text
+        note!.updatedAt = Date.now()
+        persist()
     }
 
     return {
@@ -48,6 +86,11 @@ export const useNotesStore = defineStore('notes', () => {
         createNote,
         updateNote,
         deleteNote,
+        getNoteById,
         persist,
+        addTodo,
+        removeTodo,
+        toggleTodo,
+        editTodoText
     }
 })
