@@ -1,9 +1,9 @@
-import { defineStore } from 'pinia'
-import { ref } from 'vue'
-import type { Note } from '../types/note'
-import { loadState, saveState } from '../composables/useNoteStorage.ts'
+import { defineStore } from "pinia"
+import { ref } from "vue"
+import type { Note, TodoItem } from "../types/note"
+import { loadState, saveState } from "../composables/useNoteStorage.ts"
 
-export const useNotesStore = defineStore('notes', () => {
+export const useNotesStore = defineStore("notes", () => {
     const notes = ref<Note[]>([])
     const initialized = ref(false)
 
@@ -25,7 +25,7 @@ export const useNotesStore = defineStore('notes', () => {
         return note
     }
 
-    const updateNote = (id: string, patch: Partial<Pick<Note, 'title' | 'todos'>>) => {
+    const updateNote = (id: string, patch: Partial<Pick<Note, "title" | "todos">>) => {
         const note = notes.value.find(n => n.id === id)
         if (!note) return
         Object.assign(note, patch, { updatedAt: Date.now() })
@@ -45,12 +45,14 @@ export const useNotesStore = defineStore('notes', () => {
         saveState({ schemaVersion: 1, notes: notes.value })
     }
 
-    const addTodo = (noteId: string, text: string) => {
+    const addTodo = (noteId: string, text: string): TodoItem | undefined => {
         const note = notes.value.find(n => n.id === noteId)
         if (!note) return
-        note.todos.push({ id: crypto.randomUUID(), text, checked: false })
+        const todo: TodoItem = { id: crypto.randomUUID(), text, checked: false }
+        note.todos.push(todo)
         note.updatedAt = Date.now()
         persist()
+        return todo
     }
 
     const removeTodo = (noteId: string, todoId: string) => {
@@ -79,6 +81,10 @@ export const useNotesStore = defineStore('notes', () => {
         persist()
     }
 
+    const reload = () => {
+        notes.value = loadState().notes
+    }
+
     return {
         notes,
         initialized,
@@ -91,6 +97,7 @@ export const useNotesStore = defineStore('notes', () => {
         addTodo,
         removeTodo,
         toggleTodo,
-        editTodoText
+        editTodoText,
+        reload
     }
 })
