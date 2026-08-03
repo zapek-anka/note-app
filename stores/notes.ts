@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import type { Note } from '../types/note'
-import { loadState, saveState } from '../composables/noteStorage'
+import { loadState, saveState } from '../composables/useNoteStorage.ts'
 
 export const useNotesStore = defineStore('notes', () => {
     const notes = ref<Note[]>([])

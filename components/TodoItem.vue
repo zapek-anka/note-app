@@ -6,6 +6,7 @@
     <label>
         <input type="checkbox">
         <span></span>
+        <span>x</span>
     </label>
 </template>
 
