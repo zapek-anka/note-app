@@ -2,54 +2,62 @@
 import { useNotesStore } from "../../stores/notes.ts"
 import { useDeleteNoteConfirm } from "~~/composables/useDeleteNoteConfirm.ts"
 import ConfirmDialog from "~~/components/ConfirmDialog.vue"
-import BaseButton from "~~/components/BaseButton.vue"
+import NoteCard from "~~/components/NoteCard.vue"
 
 const store = useNotesStore()
 store.init()
 
-const { isModalOpen, requestDelete, confirmDelete, cancelDelete } = useDeleteNoteConfirm()
+const { isDeleteModalOpen, requestDelete, confirmDelete, cancelDelete } = useDeleteNoteConfirm()
 </script>
 
 <template>
     <div class="wrapper">
         <div class="content">
-            <NuxtLink to="/notes/new">Новая заметка</NuxtLink>
-            <h3>Список заметок:</h3>
-            <ul>
-                <li v-for="note in store.notes" :key="note.id">
-                    <NuxtLink :to="`/notes/${note.id}`">{{ note.title }}</NuxtLink>
-                    <ul v-if="note.todos.length">
-                        <li v-for="todo in note.todos.slice(0, 3)">
-                            {{ todo.text }} {{ todo.checked }}
-                        </li>
-                    </ul>
-                    <p v-else>Задач пока нет</p>
-                    <BaseButton variant="danger" @click="requestDelete(note.id)">Удалить</BaseButton>
-                </li>
-            </ul>
-
-            <ConfirmDialog
-                :open="isModalOpen"
-                message="Удалить эту заметку? Это действие необратимо."
-                @confirm="confirmDelete"
-                @cancel="cancelDelete"
-            />
+            <div class="content-header">
+                <h3>Мои заметки:</h3>
+                <NuxtLink to="/notes/new" class="content-header__btn">Добавить</NuxtLink>
+            </div>
+            <div class="cards-wrapper">
+                <NoteCard
+                    v-for="note in store.notes"
+                    :key="note.id"
+                    :note="note"
+                    @delete="requestDelete(note.id)" />
+            </div>
         </div>
     </div>
+    <ConfirmDialog
+        :open="isDeleteModalOpen"
+        message="Удалить эту заметку? Это действие необратимо."
+        @confirm="confirmDelete"
+        @cancel="cancelDelete"
+    />
 </template>
 
 <style lang="scss" scoped>
+@use "../../assets/scss/variables" as *;
+
 .wrapper {
     display: flex;
     align-items: center;
 }
 
-.content {
-    width: 100%;
-    max-width: 640px;
-    margin: 0 auto;
-    padding: 20px;
-    border-radius: 40px;
-    background-color: #2e4c8c;
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &__btn {
+        padding: $spacing-sm $spacing-md;
+        background-color: $color-primary;
+        color: $color-bg;
+        border-radius: $border-radius-sm;
+    }
+}
+
+.cards-wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: $spacing-md;
 }
 </style>

@@ -60,6 +60,8 @@ watch(() => props.open, async (isOpen) => {
 </template>
 
 <style lang="scss" scoped>
+@use "../assets/scss/variables" as *;
+
 .modal-overlay {
     position: fixed;
     inset: 0;
@@ -69,6 +71,7 @@ watch(() => props.open, async (isOpen) => {
     align-items: center;
     justify-content: center;
     animation: fadeIn 0.3s ease-in-out;
+    z-index: 1;
 }
 
 .modal {
@@ -77,8 +80,9 @@ watch(() => props.open, async (isOpen) => {
     border-radius: 16px;
     max-width: 400px;
     width: 90%;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 25px 1px rgba(0, 0, 0, 0.1);
     transform: translateY(0);
     animation: scaleIn 0.3s ease;
+    border-color: $color-border;
 }
 </style>

@@ -29,7 +29,7 @@ withDefaults(
 .btn {
     padding: $spacing-sm $spacing-md;
     border: none;
-    border-radius: 4px;
+    border-radius: $border-radius-sm;
     font-size: 1rem;
     cursor: pointer;
 

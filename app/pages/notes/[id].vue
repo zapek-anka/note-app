@@ -6,9 +6,10 @@ import { loadDraft, clearDraft, saveDraft } from "~~/composables/useNoteStorage.
 import { computed } from "vue"
 import { useRoute } from "nuxt/app"
 import TodoItem from "~~/components/TodoItem.vue"
-import AddTodoForm from "~~/components/AddTodoForm.vue";
-import { useDeleteNoteConfirm } from "~~/composables/useDeleteNoteConfirm.ts";
+import AddTodoForm from "~~/components/AddTodoForm.vue"
+import { useDeleteNoteConfirm } from "~~/composables/useDeleteNoteConfirm.ts"
 import ConfirmDialog from "~~/components/ConfirmDialog.vue"
+import BaseButton from "~~/components/BaseButton.vue"
 
 const route = useRoute()
 const store = useNotesStore()
@@ -19,17 +20,21 @@ store.init()
 const note = computed(() => store.getNoteById(route.params.id as string))
 const noteExists = computed(() => note.value !== undefined)
 
+const showRestoreBanner = ref(false)
+const pendingDraft = ref<Note | null>(null)
+
+let noteSnapshotOnMount: Note | null = null
+const isRestoringOrDismissing = ref(false)
+
+watch(note, () => {
+    if (isRestoringOrDismissing.value) return
+    debouncedSaveDraft()
+}, { deep: true })
+
 const debouncedSaveDraft = useDebounceFn(() => {
     if (!note.value) return
     saveDraft(note.value.id, note.value)
 }, 800)
-
-watch(note, () => {
-    debouncedSaveDraft()
-}, { deep: true })
-
-const showRestoreBanner = ref(false)
-const pendingDraft = ref<Note | null>(null)
 
 const toggleTodoWithHistory = (todoId: string) => {
     if (!note.value) return
@@ -57,12 +62,6 @@ const saveNote = () => {
     const title = note.value.title.trim() || 'Без названия'
     store.updateNote(note.value.id, { title })
     clearDraft(note.value.id)
-    history.reset()
-    navigateTo('/')
-}
-
-const cancelEditing = () => {
-    clearDraft(note.value!.id)
     history.reset()
     navigateTo('/')
 }
@@ -102,7 +101,11 @@ const commitTodoTextChange = (todoId: string, before: string, after: string) => 
     }
     if (trimmed === before) return
     store.editTodoText(note.value!.id, todoId, trimmed)
-    history.push({ /* ... */ })
+    history.push({
+        type: 'edit-todo-text',
+        undo: () => store.editTodoText(note.value!.id, todoId, before),
+        redo: () => store.editTodoText(note.value!.id, todoId, trimmed),
+    })
 }
 
 const handleStorageChange = (evt: StorageEvent) => {
@@ -159,14 +162,30 @@ const removeTodo = (todoId: string) => {
     })
 }
 
-const { isModalOpen, requestDelete, confirmDelete, cancelDelete } = useDeleteNoteConfirm()
+const {
+    isDeleteModalOpen,
+    isCancelModalOpen,
+    requestDelete,
+    requestCancel,
+    confirmDelete,
+    cancelDelete
+} = useDeleteNoteConfirm()
 
-const onConfirmDelete = () => {
-    confirmDelete()
+
+const onConfirmCancelEditing = () => {
+    if (!note.value) return
+
+    clearDraft(note.value.id)
+    history.reset()
+    isCancelModalOpen.value = false
     navigateTo('/')
 }
 
 onMounted(() => {
+    if (!note.value) return
+
+    noteSnapshotOnMount = JSON.parse(JSON.stringify(note.value))
+
     const draft = loadDraft(route.params.id as string)
     if (draft && JSON.stringify(draft) !== JSON.stringify(note.value)) {
         pendingDraft.value = draft
@@ -184,13 +203,40 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <NuxtLink to="/">Вернуться к списку</NuxtLink>
-    <div v-if="!noteExists">
-        <p>Заметка не найдена — возможно, она была удалена.</p>
-    </div>
-    <div v-else>
-        <label>
-            <span>Название: </span>
+    <div class="content">
+        <div v-if="!noteExists">
+            <p>Заметка не найдена — возможно, она была удалена.</p>
+        </div>
+
+        <div v-else class="note-edit-page">
+            <header class="note-edit-page__header">
+                <NuxtLink to="/" class="note-edit-page__back">← Назад</NuxtLink>
+
+                <div class="note-edit-page__history-controls">
+                    <BaseButton variant="secondary" :disabled="!history.canUndo.value" @click="history.undo">
+                        Отменить
+                    </BaseButton>
+                    <BaseButton variant="secondary" :disabled="!history.canRedo.value" @click="history.redo">
+                        Повторить
+                    </BaseButton>
+                </div>
+
+                <BaseButton variant="danger" @click="requestDelete(note.id)">Удалить</BaseButton>
+            </header>
+
+            <div
+                v-if="showRestoreBanner"
+                class="draft-banner"
+                role="status"
+                aria-live="polite"
+            >
+                <span>У вас есть несохранённые изменения из прошлой сессии.</span>
+                <div class="draft-banner__actions">
+                    <BaseButton variant="primary" @click="restoreDraft">Восстановить</BaseButton>
+                    <BaseButton variant="secondary" @click="dismissDraft">Не сейчас</BaseButton>
+                </div>
+            </div>
+
             <input
                 v-model="note.title"
                 type="text"
@@ -199,27 +245,111 @@ onUnmounted(() => {
                 @focus="onTitleFocus"
                 @blur="onTitleBlur"
             />
-        </label>
-        <ul v-if="note.todos.length">
-            <TodoItem
-                v-for="todo in note.todos"
-                :key="todo.id"
-                :todo="todo"
-                @commit-text="(before, after) => commitTodoTextChange(todo.id, before, after)"
-                @toggle="toggleTodoWithHistory(todo.id)"
-                @remove="removeTodo(todo.id)"
-            />
-        </ul>
-        <p v-else class="empty-state">Пока нет задач</p>
-        <AddTodoForm @add="addTodo" />
+
+            <ul v-if="note.todos.length">
+                <TodoItem
+                    v-for="todo in note.todos"
+                    :key="todo.id"
+                    :todo="todo"
+                    @commit-text="(before, after) => commitTodoTextChange(todo.id, before, after)"
+                    @toggle="toggleTodoWithHistory(todo.id)"
+                    @remove="removeTodo(todo.id)"
+                />
+            </ul>
+            <p v-else class="empty-state">Пока нет задач</p>
+            <AddTodoForm @add="addTodo" />
+        </div>
+
+        <footer class="note-edit-page__footer">
+            <BaseButton variant="secondary" @click="requestCancel">Отменить</BaseButton>
+            <BaseButton variant="primary" @click="saveNote">Сохранить</BaseButton>
+        </footer>
+
+        <ConfirmDialog
+            :open="isDeleteModalOpen"
+            message="Удалить эту заметку? Это действие необратимо."
+            @confirm="confirmDelete"
+            @cancel="cancelDelete"
+        />
+        <ConfirmDialog
+            :open="isCancelModalOpen"
+            message="Отменить редактирование? Несохранённые изменения будут потеряны."
+            @confirm="onConfirmCancelEditing"
+            @cancel="() => (isCancelModalOpen = false)"
+        />
     </div>
-
-    <button type="button" @click="requestDelete(note!.id)">Удалить заметку</button>
-
-    <ConfirmDialog
-        :open="isModalOpen"
-        message="Удалить эту заметку? Это действие необратимо."
-        @confirm="onConfirmDelete"
-        @cancel="cancelDelete"
-    />
 </template>
+
+<style lang="scss" scoped>
+@use "../../../assets/scss/variables" as *;
+
+.note-title-input {
+    padding: $spacing-xs 0;
+    width: 100%;
+    margin: $spacing-lg 0 $spacing-xs;
+    font-size: 1.75rem;
+    border: none;
+    border-bottom: 2px solid transparent;
+    background: transparent;
+
+    &:focus-visible {
+        outline: none;
+        border-bottom-color: $color-primary;
+    }
+}
+
+.note-edit-page {
+    &__header {
+        position: sticky;
+        top: 0;
+        background: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: $spacing-md;
+        border-bottom: 1px solid $color-border;
+    }
+
+    &__footer {
+        position: sticky;
+        bottom: 0;
+        background: white;
+        display: flex;
+        justify-content: flex-end;
+        gap: $spacing-sm;
+        padding: $spacing-md;
+        border-top: 1px solid $color-border;
+    }
+
+    &__content {
+        padding: $spacing-md;
+        max-width: 640px;
+        margin: 0 auto;
+    }
+
+    &__history-controls {
+        display: flex;
+        gap: $spacing-md;
+    }
+}
+
+.draft-banner {
+    margin: $spacing-md;
+    padding: $spacing-md;
+    background: lighten($color-primary, 45%);
+    border: 1px solid $color-primary;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-sm;
+    flex-wrap: wrap;
+
+    &__actions {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: $spacing-md;
+        padding: $spacing-md 0 0;
+    }
+}
+</style>

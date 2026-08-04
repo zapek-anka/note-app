@@ -24,3 +24,16 @@ const submit = () => {
         <BaseButton type="submit" :disabled="!text.trim()">Добавить</BaseButton>
     </form>
 </template>
+
+<style lang="scss" scoped>
+@use "../assets/scss/variables" as *;
+
+.todo-add-form {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: $spacing-md;
+    border-top: 1px dashed $color-border;
+    margin-top: $spacing-md;
+    padding: $spacing-md $spacing-xs;
+}
+</style>
