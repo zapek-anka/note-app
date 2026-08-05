@@ -28,7 +28,7 @@ const onDeleteClick = (evt: MouseEvent) => {
             <li v-if="remainingCount > 0" class="note-card__more">
                 +{{ remainingCount }} ещё…
             </li>
-            <li v-if="!note.todos.length" class="note-card__empty">
+            <li v-if="!note.todos.length">
                 Нет задач
             </li>
         </ul>
@@ -55,6 +55,13 @@ const onDeleteClick = (evt: MouseEvent) => {
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 
+    &__title {
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
     &__preview {
         flex: 1;
     }
@@ -62,6 +69,10 @@ const onDeleteClick = (evt: MouseEvent) => {
     &__preview-item {
         padding: $spacing-sm $spacing-xs;
         border-bottom: 1px solid $color-border;
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     &__done {
@@ -77,6 +88,10 @@ const onDeleteClick = (evt: MouseEvent) => {
     &:hover {
         transform: translateY(-2px) rotate(-0.5deg);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    &__more {
+        padding: $spacing-sm $spacing-xs;
     }
 
     &:focus-visible {

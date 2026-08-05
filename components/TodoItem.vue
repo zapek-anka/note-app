@@ -38,7 +38,7 @@ const onRemove = () => {
                 :checked="todo.checked"
                 @change="onToggle"
             />
-            <span class="todo-checkbox-wrapper__box" aria-hidden="true"></span>
+            <span class="todo-checkbox-wrapper__box" aria-hidden="true"/>
         </label>
         <input
             class="todo-item__input"

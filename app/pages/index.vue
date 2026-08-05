@@ -15,9 +15,15 @@ const { isDeleteModalOpen, requestDelete, confirmDelete, cancelDelete } = useDel
         <div class="content">
             <div class="content-header">
                 <h3>Мои заметки:</h3>
-                <NuxtLink to="/notes/new" class="content-header__btn">Добавить</NuxtLink>
+                <NuxtLink v-if="store.notes.length" to="/notes/new" class="content-header__btn">Добавить</NuxtLink>
             </div>
-            <div class="cards-wrapper">
+            <div v-if="!store.notes.length">
+                <p class="empty-state">Заметок пока нет</p>
+                <NuxtLink to="/notes/new" class="content-header__btn">
+                    Создать первую заметку
+                </NuxtLink>
+            </div>
+            <div v-else class="cards-wrapper">
                 <NoteCard
                     v-for="note in store.notes"
                     :key="note.id"
@@ -25,13 +31,13 @@ const { isDeleteModalOpen, requestDelete, confirmDelete, cancelDelete } = useDel
                     @delete="requestDelete(note.id)" />
             </div>
         </div>
+        <ConfirmDialog
+            :open="isDeleteModalOpen"
+            message="Удалить эту заметку? Это действие необратимо."
+            @confirm="confirmDelete"
+            @cancel="cancelDelete"
+        />
     </div>
-    <ConfirmDialog
-        :open="isDeleteModalOpen"
-        message="Удалить эту заметку? Это действие необратимо."
-        @confirm="confirmDelete"
-        @cancel="cancelDelete"
-    />
 </template>
 
 <style lang="scss" scoped>
@@ -52,7 +58,12 @@ const { isDeleteModalOpen, requestDelete, confirmDelete, cancelDelete } = useDel
         background-color: $color-primary;
         color: $color-bg;
         border-radius: $border-radius-sm;
+        font-weight: 500;
     }
+}
+
+.empty-state {
+    padding: $spacing-sm $spacing-xs;
 }
 
 .cards-wrapper {

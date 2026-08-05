@@ -1,4 +1,4 @@
-export const useDebounceFn = <T extends (...args: any[]) => void>(fn: T, delay: number) => {
+export const useDebounceFn = <T extends (...args: unknown[]) => void>(fn: T, delay: number) => {
     let timeoutId: ReturnType<typeof setTimeout> | null = null
 
     return (...args: Parameters<T>) => {

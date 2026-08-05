@@ -25,6 +25,7 @@ withDefaults(
 
 <style lang="scss" scoped>
 @use "../assets/scss/variables" as *;
+@use "sass:color";
 
 .btn {
     padding: $spacing-sm $spacing-md;
@@ -49,7 +50,7 @@ withDefaults(
     color: white;
 
     &:hover:not(:disabled) {
-        background: darken($color-primary, 10%);
+        background: color.adjust($color-danger, $lightness: -10%);
     }
 }
 
@@ -58,7 +59,7 @@ withDefaults(
     color: white;
 
     &:hover:not(:disabled) {
-        background: darken($color-danger, 10%);
+        background: color.adjust($color-danger, $lightness: -10%);
     }
 }
 

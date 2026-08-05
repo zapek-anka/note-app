@@ -107,6 +107,7 @@ const commitTodoTextChange = (todoId: string, before: string, after: string) => 
         redo: () => store.editTodoText(note.value!.id, todoId, trimmed),
     })
 }
+const showDeletedElsewhereNotice = ref(false)
 
 const handleStorageChange = (evt: StorageEvent) => {
     if (evt.key !== 'notes-app:data') return
@@ -119,7 +120,7 @@ const handleStorageChange = (evt: StorageEvent) => {
     }
 }
 
-let titleBeforeEdit = ''
+let titleBeforeEdit = ""
 
 const onTitleFocus = () => {
     titleBeforeEdit = note.value!.title
@@ -206,6 +207,7 @@ onUnmounted(() => {
     <div class="content">
         <div v-if="!noteExists">
             <p>Заметка не найдена — возможно, она была удалена.</p>
+            <NuxtLink to="/">Вернуться к списку</NuxtLink>
         </div>
 
         <div v-else class="note-edit-page">
@@ -237,33 +239,35 @@ onUnmounted(() => {
                 </div>
             </div>
 
-            <input
-                v-model="note.title"
-                type="text"
-                class="note-title-input"
-                placeholder="Название заметки"
-                @focus="onTitleFocus"
-                @blur="onTitleBlur"
-            />
-
-            <ul v-if="note.todos.length">
-                <TodoItem
-                    v-for="todo in note.todos"
-                    :key="todo.id"
-                    :todo="todo"
-                    @commit-text="(before, after) => commitTodoTextChange(todo.id, before, after)"
-                    @toggle="toggleTodoWithHistory(todo.id)"
-                    @remove="removeTodo(todo.id)"
+            <main>
+                <input
+                    v-model="note.title"
+                    type="text"
+                    class="note-title-input"
+                    placeholder="Название заметки"
+                    @focus="onTitleFocus"
+                    @blur="onTitleBlur"
                 />
-            </ul>
-            <p v-else class="empty-state">Пока нет задач</p>
-            <AddTodoForm @add="addTodo" />
-        </div>
 
-        <footer class="note-edit-page__footer">
-            <BaseButton variant="secondary" @click="requestCancel">Отменить</BaseButton>
-            <BaseButton variant="primary" @click="saveNote">Сохранить</BaseButton>
-        </footer>
+                <ul v-if="note.todos.length">
+                    <TodoItem
+                        v-for="todo in note.todos"
+                        :key="todo.id"
+                        :todo="todo"
+                        @commit-text="(before, after) => commitTodoTextChange(todo.id, before, after)"
+                        @toggle="toggleTodoWithHistory(todo.id)"
+                        @remove="removeTodo(todo.id)"
+                    />
+                </ul>
+                <p v-else class="empty-state">Пока нет задач</p>
+                <AddTodoForm @add="addTodo" />
+            </main>
+
+            <footer class="note-edit-page__footer">
+                <BaseButton variant="secondary" @click="requestCancel">Отменить</BaseButton>
+                <BaseButton variant="primary" @click="saveNote">Сохранить</BaseButton>
+            </footer>
+        </div>
 
         <ConfirmDialog
             :open="isDeleteModalOpen"
