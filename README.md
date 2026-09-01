@@ -1,12 +1,12 @@
-# Notes App
+# Notes App :cherry_blossom:
 
 Небольшое SPA-приложение для заметок с todo-списками, ручной историей
 изменений (undo/redo) и локальным сохранением.
 
-## Стек
+## Стек :hibiscus:
 Nuxt 4, TypeScript (strict), Pinia, SCSS, Vitest.
 
-## Запуск
+## Запуск :sunflower:
 
 ### Через Docker (рекомендуется)
 
@@ -22,13 +22,13 @@ npm install
 npm run dev
 ```
 
-## Тесты
+## Тесты :rose:
 
 ```bash
 npm run test
 ```
 
-## Архитектурные решения
+## Архитектурные решения :herb:
 
 ### Хранение данных
 Все заметки хранятся единым объектом в localStorage под одним ключом
