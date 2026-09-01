@@ -4,7 +4,7 @@
 изменений (undo/redo) и локальным сохранением.
 
 ## Стек
-Nuxt 3/4, TypeScript (strict), Pinia, SCSS, Vitest.
+Nuxt 4, TypeScript (strict), Pinia, SCSS, Vitest.
 
 ## Запуск
 
