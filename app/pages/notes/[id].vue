@@ -61,13 +61,14 @@ const saveNote = () => {
     if (!note.value) return
     const title = note.value.title.trim() || 'Без названия'
     store.updateNote(note.value.id, { title })
+    store.persistImmediately()
     clearDraft(note.value.id)
     history.reset()
     navigateTo('/')
 }
 
 const handleKeydown = (evt: KeyboardEvent) => {
-    const isCtrlZ = (evt.ctrlKey || evt.metaKey) && evt.key === 'z'
+    const isCtrlZ = (evt.ctrlKey || evt.metaKey) && evt.key.toLowerCase() === 'z'
     if (!isCtrlZ) return
 
     const target = evt.target as HTMLElement
@@ -174,7 +175,13 @@ const {
 
 
 const onConfirmCancelEditing = () => {
-    if (!note.value) return
+    if (!note.value || !noteSnapshotOnMount) return
+
+    store.updateNote(note.value.id, {
+        title: noteSnapshotOnMount.title,
+        todos: noteSnapshotOnMount.todos,
+    })
+    store.persistImmediately()
 
     clearDraft(note.value.id)
     history.reset()
@@ -182,22 +189,29 @@ const onConfirmCancelEditing = () => {
     navigateTo('/')
 }
 
+const hasDraftDiverged = (draft: Note, saved: Note) : boolean => {
+    return draft?.title !== saved?.title || JSON.stringify(draft?.todos) !== JSON.stringify(saved?.todos)
+}
+
 onMounted(() => {
     if (!note.value) return
 
     noteSnapshotOnMount = JSON.parse(JSON.stringify(note.value))
 
-    const draft = loadDraft(route.params.id as string)
-    if (draft && JSON.stringify(draft) !== JSON.stringify(note.value)) {
+    const draft = loadDraft(note.value.id)
+
+    if (draft && hasDraftDiverged(draft, note.value)) {
         pendingDraft.value = draft
         showRestoreBanner.value = true
     }
 
+    window.addEventListener('beforeunload', store.persistImmediately)
     window.addEventListener('keydown', handleKeydown)
     window.addEventListener('storage', handleStorageChange)
 })
 
 onUnmounted(() => {
+    window.removeEventListener('beforeunload', store.persistImmediately)
     window.removeEventListener('keydown', handleKeydown)
     window.removeEventListener('storage', handleStorageChange)
 })
@@ -286,6 +300,7 @@ onUnmounted(() => {
 
 <style lang="scss" scoped>
 @use "../../../assets/scss/variables" as *;
+@use "sass:color";
 
 .note-title-input {
     padding: $spacing-xs 0;
@@ -340,7 +355,7 @@ onUnmounted(() => {
 .draft-banner {
     margin: $spacing-md;
     padding: $spacing-md;
-    background: lighten($color-primary, 45%);
+    background: color.adjust($color-primary, $lightness: 45%);
     border: 1px solid $color-primary;
     border-radius: 6px;
     display: flex;

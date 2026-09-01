@@ -50,7 +50,7 @@ withDefaults(
     color: white;
 
     &:hover:not(:disabled) {
-        background: color.adjust($color-danger, $lightness: -10%);
+        background: color.adjust($color-primary, $lightness: -10%);
     }
 }
 

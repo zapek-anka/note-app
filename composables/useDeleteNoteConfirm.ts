@@ -24,7 +24,9 @@ export function useDeleteNoteConfirm() {
     const confirmDelete = () => {
         if (!noteToDelete.value) return
         store.deleteNote(noteToDelete.value)
-        cancelDelete()
+        store.persistImmediately()
+        isDeleteModalOpen.value = false
+        navigateTo('/')
     }
 
     return {
