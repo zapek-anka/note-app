@@ -1,75 +1,58 @@
-# Nuxt Minimal Starter
+# Notes App
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+Небольшое SPA-приложение для заметок с todo-списками, ручной историей
+изменений (undo/redo) и локальным сохранением.
 
-## Setup
+## Стек
+Nuxt 3/4, TypeScript (strict), Pinia, SCSS, Vitest.
 
-Make sure to install dependencies:
+## Запуск
+
+### Через Docker (рекомендуется)
 
 ```bash
-# npm
+docker compose up --build
+```
+Приложение доступно на http://localhost:8080
+
+### Локально
+
+```bash
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
-```
-
-## Development Server
-
-Start the development server on `http://localhost:3000`:
-
-```bash
-# npm
 npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
-
-Build the application for production:
+## Тесты
 
 ```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
+npm run test
 ```
 
-Locally preview production build:
+## Архитектурные решения
 
-```bash
-# npm
-npm run preview
+### Хранение данных
+Все заметки хранятся единым объектом в localStorage под одним ключом
+(включая версию схемы `schemaVersion`), а не по отдельному ключу на
+заметку — обосновано тем, что главная страница в любом случае требует
+чтения всех заметок разом, и на реалистичном объёме данных для этого
+задания это не создаёт проблем с производительностью.
 
-# pnpm
-pnpm preview
+### История изменений
+Реализована через command-паттерн (каждая команда — { undo, redo }),
+не через полные снепшоты заметки — так на 50 шагов история остаётся
+лёгкой. Текстовый ввод коммитится в историю по blur/паузе, а не на
+каждый символ.
 
-# yarn
-yarn preview
+Ctrl+Z / Shift+Ctrl+Z перехватываются глобально на странице
+редактирования, за исключением случаев, когда фокус находится в
+текстовом поле — в этом случае событие не перехватывается, чтобы не
+конфликтовать с нативным undo браузера внутри инпута.
 
-# bun
-bun run preview
-```
+### Edge cases — принятые решения
+- Пустой title при сохранении → подставляется "Без названия"
+- Пустой текст todo → запись не создаётся
+- Удаление заметки в другой вкладке → отслеживается через storage event,
+  показывается уведомление, редактирование блокируется
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+### Известные ограничения
+- проверяется работа черновика - изменения должны сохраняться, но иногда избыточно
