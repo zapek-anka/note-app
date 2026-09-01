@@ -23,7 +23,7 @@ export const useNotesStore = defineStore("notes", () => {
             updatedAt: Date.now(),
         }
         notes.value.push(note)
-        persist()
+        persistImmediately()
         return note
     }
 

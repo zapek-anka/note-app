@@ -1,6 +1,8 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useNotesStore } from './notes'
+import type { Note } from '../types/note'
+import * as storageModule from '../composables/useNoteStorage'
 
 describe('useNotesStore', () => {
     beforeEach(() => {
@@ -64,7 +66,7 @@ describe('useNotesStore', () => {
 
             const raw = localStorage.getItem('notes-app:data')
             const parsed = JSON.parse(raw!)
-            expect(parsed.notes).toHaveLength(1)
+            expect(parsed?.notes).toHaveLength(1)
             expect(parsed.notes[0].title).toBe('star')
         })
     })
@@ -143,6 +145,52 @@ describe('useNotesStore', () => {
 
             expect(storeB.notes).toHaveLength(1)
             expect(storeB.notes[0].title).toBe("i'll be back")
+        })
+    })
+
+    describe('persistence debouncing', () => {
+        let store: ReturnType<typeof useNotesStore>
+        let note: Note
+        let saveStateSpy: ReturnType<typeof vi.spyOn>
+
+        beforeEach(() => {
+            vi.useFakeTimers()
+
+            store = useNotesStore()
+            store.init()
+            note = store.createNote('N')
+
+            saveStateSpy = vi.spyOn(storageModule, 'saveState')
+            saveStateSpy.mockClear()
+        })
+
+        afterEach(() => {
+            vi.useRealTimers()
+            vi.restoreAllMocks()
+        })
+
+        it('стор не обновляется синхронно со вводом', () => {
+            store.updateNote(note.id, { title: 'A' })
+            store.updateNote(note.id, { title: 'AB' })
+            store.updateNote(note.id, { title: 'ABC' })
+
+            expect(saveStateSpy).not.toHaveBeenCalled()
+        })
+
+        it('мержит множественные вызовы в один задебаунсенный', () => {
+            store.updateNote(note.id, { title: 'A' })
+            store.updateNote(note.id, { title: 'AB' })
+            store.updateNote(note.id, { title: 'ABC' })
+
+            vi.advanceTimersByTime(500)
+            expect(saveStateSpy).toHaveBeenCalledOnce()
+        })
+
+        it('persistImmediately отрабатывает синхронно для edge-кейсов', () => {
+            store.updateNote(note.id, { title: 'Changed' })
+            store.persistImmediately()
+
+            expect(saveStateSpy).toHaveBeenCalledOnce()
         })
     })
 })
