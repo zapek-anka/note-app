@@ -24,13 +24,13 @@ withDefaults(
 </template>
 
 <style lang="scss" scoped>
-@use "../assets/scss/variables" as *;
+@use "@/assets/scss/variables" as v;
 @use "sass:color";
 
 .btn {
-    padding: $spacing-sm $spacing-md;
+    padding: v.$spacing-sm v.$spacing-md;
     border: none;
-    border-radius: $border-radius-sm;
+    border-radius: v.$border-radius-sm;
     font-size: 1rem;
     cursor: pointer;
 
@@ -40,36 +40,36 @@ withDefaults(
     }
 
     &:focus-visible {
-        outline: 2px solid $color-primary;
+        outline: 2px solid v.$color-primary;
         outline-offset: 2px;
     }
 }
 
 .btn--primary {
-    background: $color-primary;
+    background: v.$color-primary;
     color: white;
 
     &:hover:not(:disabled) {
-        background: color.adjust($color-primary, $lightness: -10%);
+        background: color.adjust(v.$color-primary, $lightness: -10%);
     }
 }
 
 .btn--danger {
-    background: $color-danger;
+    background: v.$color-danger;
     color: white;
 
     &:hover:not(:disabled) {
-        background: color.adjust($color-danger, $lightness: -10%);
+        background: color.adjust(v.$color-danger, $lightness: -10%);
     }
 }
 
 .btn--secondary {
     background: transparent;
-    border: 1px solid $color-border;
-    color: $color-text;
+    border: 1px solid v.$color-border;
+    color: v.$color-text;
 
     &:hover:not(:disabled) {
-        background: $color-bg;
+        background: v.$color-bg;
     }
 }
 </style>

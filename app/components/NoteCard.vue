@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { Note } from "~~/types/note"
-import BaseButton from "~~/components/BaseButton.vue"
+import type { Note } from "~/types/note.ts"
+import BaseButton from "~/components/BaseButton.vue"
 
 const props = defineProps<{ note: Note }>()
 const emit = defineEmits<{ delete: [] }>()
@@ -42,16 +42,16 @@ const onDeleteClick = (evt: MouseEvent) => {
 </template>
 
 <style lang="scss" scoped>
-@use "../assets/scss/variables" as *;
+@use "@/assets/scss/variables" as v;
 
 .note-card {
     display: flex;
     flex-direction: column;
     height: 100%;
     padding: 10px;
-    border-radius: $border-radius-md;
-    border: 1px solid $color-border;
-    background-color: $color-card;
+    border-radius: v.$border-radius-md;
+    border: 1px solid v.$color-border;
+    background-color: v.$color-card;
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
     transition: transform 0.15s ease, box-shadow 0.15s ease;
 
@@ -67,8 +67,8 @@ const onDeleteClick = (evt: MouseEvent) => {
     }
 
     &__preview-item {
-        padding: $spacing-sm $spacing-xs;
-        border-bottom: 1px solid $color-border;
+        padding: v.$spacing-sm v.$spacing-xs;
+        border-bottom: 1px solid v.$color-border;
         width: 100%;
         white-space: nowrap;
         overflow: hidden;
@@ -77,11 +77,11 @@ const onDeleteClick = (evt: MouseEvent) => {
 
     &__done {
         text-decoration: line-through;
-        color: $color-primary;
+        color: v.$color-primary;
     }
 
     &__delete {
-        margin-top: $spacing-md;
+        margin-top: v.$spacing-md;
         align-self: flex-end;
     }
 
@@ -91,11 +91,11 @@ const onDeleteClick = (evt: MouseEvent) => {
     }
 
     &__more {
-        padding: $spacing-sm $spacing-xs;
+        padding: v.$spacing-sm v.$spacing-xs;
     }
 
     &:focus-visible {
-        outline: 2px solid $color-primary;
+        outline: 2px solid v.$color-primary;
         outline-offset: 2px;
     }
 }

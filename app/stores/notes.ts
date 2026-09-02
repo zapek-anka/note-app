@@ -1,9 +1,9 @@
 import { defineStore } from "pinia"
 import { ref } from "vue"
-import type { Note, TodoItem } from "../types/note"
-import { SCHEMA_VERSION } from "../types/note"
-import { loadState, saveState } from "../composables/useNoteStorage.ts"
-import { useDebounceFn } from "~~/utils/debounce.ts"
+import type { Note, TodoItem } from "~/types/note.ts"
+import { SCHEMA_VERSION } from "~/types/note.ts"
+import { loadState, saveState } from "~/composables/useNoteStorage.ts"
+import { useDebounceFn } from "~/utils/debounce.ts"
 
 export const useNotesStore = defineStore("notes", () => {
     const notes = ref<Note[]>([])

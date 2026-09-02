@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue"
-import BaseButton from "~~/components/BaseButton.vue"
+import BaseButton from "~/components/BaseButton.vue"
 
 const emit = defineEmits<{ add: [text: string] }>()
 const text = ref("")
@@ -26,14 +26,14 @@ const submit = () => {
 </template>
 
 <style lang="scss" scoped>
-@use "../assets/scss/variables" as *;
+@use "@/assets/scss/variables" as v;
 
 .todo-add-form {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: $spacing-md;
-    border-top: 1px dashed $color-border;
-    margin-top: $spacing-md;
-    padding: $spacing-md $spacing-xs;
+    gap: v.$spacing-md;
+    border-top: 1px dashed v.$color-border;
+    margin-top: v.$spacing-md;
+    padding: v.$spacing-md v.$spacing-xs;
 }
 </style>

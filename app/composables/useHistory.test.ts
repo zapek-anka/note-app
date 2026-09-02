@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
-import { useHistory } from './useHistory'
-import type { Command } from '../types/history'
+import { useHistory } from './useHistory.ts'
+import type { Command } from '~/types/history.ts'
 
 function makeCommand(overrides: Partial<Command> = {}): Command {
     return {

@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
-import { useNotesStore } from './notes'
-import type { Note } from '../types/note'
-import * as storageModule from '../composables/useNoteStorage'
+import { useNotesStore } from './notes.ts'
+import type { Note } from '~/types/note.ts'
+import * as storageModule from '../composables/useNoteStorage.ts'
 
 describe('useNotesStore', () => {
     beforeEach(() => {

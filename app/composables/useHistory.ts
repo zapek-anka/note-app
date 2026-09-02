@@ -1,5 +1,5 @@
 import { ref, computed } from 'vue'
-import type { Command } from "../types/history"
+import type { Command } from "~/types/history.ts"
 
 export const useHistory = (limit = 50)=> {
     const past = ref<Command[]>([])

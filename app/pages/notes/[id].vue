@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { useNotesStore } from "~~/stores/notes.ts"
-import { useHistory } from "~~/composables/useHistory.ts"
-import { useDebounceFn } from "~~/utils/debounce.ts"
-import { loadDraft, clearDraft, saveDraft } from "~~/composables/useNoteStorage.ts"
+import { useNotesStore } from "~/stores/notes.ts"
+import { useHistory } from "~/composables/useHistory.ts"
+import { useDebounceFn } from "~/utils/debounce.ts"
+import { loadDraft, clearDraft, saveDraft } from "~/composables/useNoteStorage.ts"
 import { computed } from "vue"
 import { useRoute } from "nuxt/app"
-import TodoItem from "~~/components/TodoItem.vue"
-import AddTodoForm from "~~/components/AddTodoForm.vue"
-import { useDeleteNoteConfirm } from "~~/composables/useDeleteNoteConfirm.ts"
-import ConfirmDialog from "~~/components/ConfirmDialog.vue"
-import BaseButton from "~~/components/BaseButton.vue"
+import TodoItem from "~/components/TodoItem.vue"
+import AddTodoForm from "~/components/AddTodoForm.vue"
+import { useDeleteNoteConfirm } from "~/composables/useDeleteNoteConfirm.ts"
+import ConfirmDialog from "~/components/ConfirmDialog.vue"
+import BaseButton from "~/components/BaseButton.vue"
 
 const route = useRoute()
 const store = useNotesStore()
@@ -299,13 +299,13 @@ onUnmounted(() => {
 </template>
 
 <style lang="scss" scoped>
-@use "../../../assets/scss/variables" as *;
+@use "@/assets/scss/variables" as v;
 @use "sass:color";
 
 .note-title-input {
-    padding: $spacing-xs 0;
+    padding: v.$spacing-xs 0;
     width: 100%;
-    margin: $spacing-lg 0 $spacing-xs;
+    margin: v.$spacing-lg 0 v.$spacing-xs;
     font-size: 1.75rem;
     border: none;
     border-bottom: 2px solid transparent;
@@ -313,7 +313,7 @@ onUnmounted(() => {
 
     &:focus-visible {
         outline: none;
-        border-bottom-color: $color-primary;
+        border-bottom-color: v.$color-primary;
     }
 }
 
@@ -325,8 +325,8 @@ onUnmounted(() => {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: $spacing-md;
-        border-bottom: 1px solid $color-border;
+        padding: v.$spacing-md;
+        border-bottom: 1px solid v.$color-border;
     }
 
     &__footer {
@@ -335,40 +335,40 @@ onUnmounted(() => {
         background: white;
         display: flex;
         justify-content: flex-end;
-        gap: $spacing-sm;
-        padding: $spacing-md;
-        border-top: 1px solid $color-border;
+        gap: v.$spacing-sm;
+        padding: v.$spacing-md;
+        border-top: 1px solid v.$color-border;
     }
 
     &__content {
-        padding: $spacing-md;
+        padding: v.$spacing-md;
         max-width: 640px;
         margin: 0 auto;
     }
 
     &__history-controls {
         display: flex;
-        gap: $spacing-md;
+        gap: v.$spacing-md;
     }
 }
 
 .draft-banner {
-    margin: $spacing-md;
-    padding: $spacing-md;
-    background: color.adjust($color-primary, $lightness: 45%);
-    border: 1px solid $color-primary;
+    margin: v.$spacing-md;
+    padding: v.$spacing-md;
+    background: color.adjust(v.$color-primary, $lightness: 45%);
+    border: 1px solid v.$color-primary;
     border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: $spacing-sm;
+    gap: v.$spacing-sm;
     flex-wrap: wrap;
 
     &__actions {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: $spacing-md;
-        padding: $spacing-md 0 0;
+        gap: v.$spacing-md;
+        padding: v.$spacing-md 0 0;
     }
 }
 </style>

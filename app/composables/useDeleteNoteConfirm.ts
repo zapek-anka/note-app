@@ -1,5 +1,5 @@
 import { ref } from "vue"
-import { useNotesStore } from "../stores/notes"
+import { useNotesStore } from "~/stores/notes.ts"
 
 export function useDeleteNoteConfirm() {
     const store = useNotesStore()

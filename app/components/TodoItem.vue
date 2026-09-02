@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import type { TodoItem } from "../types/note"
-import BaseButton from "~~/components/BaseButton.vue"
+import type { TodoItem } from "~/types/note.ts"
+import BaseButton from "~/components/BaseButton.vue"
 
 const props = defineProps<{ todo: TodoItem }>()
 const emit = defineEmits<{
@@ -58,14 +58,14 @@ const onRemove = () => {
 </template>
 
 <style lang="scss" scoped>
-@use "../assets/scss/variables" as *;
+@use "@/assets/scss/variables" as v;
 
 .todo-item {
     display: flex;
     align-items: center;
-    gap: $spacing-sm;
-    padding: $spacing-sm $spacing-xs;
-    border-bottom: 1px solid $color-border;
+    gap: v.$spacing-sm;
+    padding: v.$spacing-sm v.$spacing-xs;
+    border-bottom: 1px solid v.$color-border;
 }
 
 .todo-item__input {
@@ -77,13 +77,13 @@ const onRemove = () => {
     border-radius: 4px;
 
     &:hover {
-        background: $color-bg;
+        background: v.$color-bg;
     }
 
     &:focus-visible {
         outline: none;
         background: white;
-        box-shadow: 0 0 0 2px $color-primary;
+        box-shadow: 0 0 0 2px v.$color-primary;
     }
 }
 
@@ -104,7 +104,7 @@ const onRemove = () => {
     &__box {
         width: 20px;
         height: 20px;
-        border: 2px solid $color-border;
+        border: 2px solid v.$color-border;
         border-radius: 4px;
         display: inline-flex;
         align-items: center;
@@ -113,8 +113,8 @@ const onRemove = () => {
     }
 
     &__input:checked + &__box {
-        background: $color-primary;
-        border-color: $color-primary;
+        background: v.$color-primary;
+        border-color: v.$color-primary;
 
         &::after {
             content: '';
@@ -127,7 +127,7 @@ const onRemove = () => {
     }
 
     &__input:focus-visible + &__box {
-        outline: 2px solid $color-primary;
+        outline: 2px solid v.$color-primary;
         outline-offset: 2px;
     }
 }

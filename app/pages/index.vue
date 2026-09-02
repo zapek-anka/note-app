@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useNotesStore } from "../../stores/notes.ts"
-import { useDeleteNoteConfirm } from "~~/composables/useDeleteNoteConfirm.ts"
-import ConfirmDialog from "~~/components/ConfirmDialog.vue"
-import NoteCard from "~~/components/NoteCard.vue"
+import { useNotesStore } from "~/stores/notes.ts"
+import { useDeleteNoteConfirm } from "~/composables/useDeleteNoteConfirm.ts"
+import ConfirmDialog from "~/components/ConfirmDialog.vue"
+import NoteCard from "~/components/NoteCard.vue"
 
 const store = useNotesStore()
 store.init()
@@ -41,7 +41,7 @@ const { isDeleteModalOpen, requestDelete, confirmDelete, cancelDelete } = useDel
 </template>
 
 <style lang="scss" scoped>
-@use "../../assets/scss/variables" as *;
+@use "@/assets/scss/variables" as v;
 
 .wrapper {
     display: flex;
@@ -54,21 +54,21 @@ const { isDeleteModalOpen, requestDelete, confirmDelete, cancelDelete } = useDel
     align-items: center;
 
     &__btn {
-        padding: $spacing-sm $spacing-md;
-        background-color: $color-primary;
-        color: $color-bg;
-        border-radius: $border-radius-sm;
+        padding: v.$spacing-sm v.$spacing-md;
+        background-color: v.$color-primary;
+        color: v.$color-bg;
+        border-radius: v.$border-radius-sm;
         font-weight: 500;
     }
 }
 
 .empty-state {
-    padding: $spacing-sm $spacing-xs;
+    padding: v.$spacing-sm v.$spacing-xs;
 }
 
 .cards-wrapper {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: $spacing-md;
+    gap: v.$spacing-md;
 }
 </style>

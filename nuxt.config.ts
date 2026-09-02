@@ -3,6 +3,6 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   modules: ['@pinia/nuxt', '@nuxt/eslint'],
-  css: ['../assets/scss/main.scss'],
+  css: ['@/assets/scss/main.scss'],
   ssr: false,
 })

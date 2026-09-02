@@ -1,18 +1,18 @@
-@import "_variables";
+@use "variables" as v;
 
 body {
-  font-family: $font-body;
-  color: $color-text;
-  background-color: $color-bg;
+  font-family: v.$font-body;
+  color: v.$color-text;
+  background-color: v.$color-bg;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: $font-display;
+  font-family: v.$font-display;
 }
 
 a {
   text-decoration: none;
-  color: $color-text;
+  color: v.$color-text;
   transition: color 0.4s ease-in-out;
   font-weight: 700;
 }
@@ -31,7 +31,7 @@ ul {
   width: 100%;
   max-width: 640px;
   margin: 0 auto;
-  padding: $spacing-lg;
+  padding: v.$spacing-lg;
 }
 
 input {

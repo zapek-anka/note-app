@@ -60,7 +60,7 @@ watch(() => props.open, async (isOpen) => {
 </template>
 
 <style lang="scss" scoped>
-@use "../assets/scss/variables" as *;
+@use "@/assets/scss/variables" as v;
 
 .modal-overlay {
     position: fixed;
@@ -83,6 +83,6 @@ watch(() => props.open, async (isOpen) => {
     box-shadow: 0 0 25px 1px rgba(0, 0, 0, 0.1);
     transform: translateY(0);
     animation: scaleIn 0.3s ease;
-    border-color: $color-border;
+    border-color: v.$color-border;
 }
 </style>

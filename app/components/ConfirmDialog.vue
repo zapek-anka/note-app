@@ -17,13 +17,13 @@ const emit = defineEmits<{ confirm: []; cancel: [] }>()
 </template>
 
 <style lang="scss" scoped>
-@use "../assets/scss/variables" as *;
+@use "@/assets/scss/variables" as v;
 
 .confirm-dialog {
     &__actions {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: $spacing-md;
+        gap: v.$spacing-md;
     }
 }
 </style>

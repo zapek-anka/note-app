@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from 'vitest'
-import { loadState, saveState } from './useNoteStorage'
+import { loadState, saveState } from './useNoteStorage.ts'
 
 describe('notesStorage', () => {
     beforeEach(() => localStorage.clear())

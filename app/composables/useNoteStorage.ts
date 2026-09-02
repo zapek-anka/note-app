@@ -1,5 +1,5 @@
-import type { PersistedState, Note } from '../types/note'
-import { SCHEMA_VERSION } from '../types/note'
+import type { PersistedState, Note } from '~/types/note.ts'
+import { SCHEMA_VERSION } from '~/types/note.ts'
 
 const STORAGE_KEY = 'notes-app:data'
 const DRAFT_KEY_PREFIX = 'notes-app:draft:'
