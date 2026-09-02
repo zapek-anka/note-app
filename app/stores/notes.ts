@@ -2,7 +2,7 @@ import { defineStore } from "pinia"
 import { ref } from "vue"
 import type { Note, TodoItem } from "~/types/note.ts"
 import { SCHEMA_VERSION } from "~/types/note.ts"
-import { loadState, saveState } from "~/composables/useNoteStorage.ts"
+import * as storage from "~/composables/useNoteStorage.ts"
 import { useDebounceFn } from "~/utils/debounce.ts"
 
 export const useNotesStore = defineStore("notes", () => {
@@ -11,7 +11,7 @@ export const useNotesStore = defineStore("notes", () => {
 
     const init = () => {
         if (initialized.value) return
-        notes.value = loadState().notes
+        notes.value = storage.loadState().notes
         initialized.value = true
     }
 
@@ -44,12 +44,10 @@ export const useNotesStore = defineStore("notes", () => {
     }
 
     const persistImmediately = () => {
-        saveState({ schemaVersion: SCHEMA_VERSION, notes: notes.value })
+        storage.saveState({ schemaVersion: SCHEMA_VERSION, notes: notes.value })
     }
 
-    const persist = () => {
-        useDebounceFn(persistImmediately, 500)
-    }
+    const persist = useDebounceFn(persistImmediately, 500)
 
     const addTodo = (noteId: string, text: string): TodoItem | undefined => {
         const note = notes.value.find(n => n.id === noteId)
@@ -88,7 +86,7 @@ export const useNotesStore = defineStore("notes", () => {
     }
 
     const reload = () => {
-        notes.value = loadState().notes
+        notes.value = storage.loadState().notes
     }
 
     return {
