@@ -3,6 +3,8 @@
 Небольшое SPA-приложение для заметок с todo-списками, ручной историей
 изменений (undo/redo) и локальным сохранением.
 
+wip: аутентификация с помощью Nuxt Middleware
+
 ## Стек :hibiscus:
 Nuxt 4, TypeScript (strict), Pinia, SCSS, Vitest.
 
