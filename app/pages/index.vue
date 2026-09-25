@@ -4,6 +4,8 @@ import { useDeleteNoteConfirm } from "~/composables/useDeleteNoteConfirm.ts"
 import ConfirmDialog from "~/components/ConfirmDialog.vue"
 import NoteCard from "~/components/NoteCard.vue"
 
+definePageMeta({ middleware: 'auth' })
+
 const store = useNotesStore()
 store.init()
 

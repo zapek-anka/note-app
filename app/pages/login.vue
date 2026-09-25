@@ -1,11 +1,12 @@
 <script setup lang="ts">
+
 definePageMeta({ layout: 'auth' })
 
 const email = ref('')
 const password = ref('')
 const errorMessage = ref('')
 const isSubmitting = ref(false)
-const route = useRoute()
+const { fetch: refreshSession } = useUserSession()
 
 const onSubmit = async () => {
     errorMessage.value = ''
@@ -16,9 +17,12 @@ const onSubmit = async () => {
             method: 'POST',
             body: { email: email.value, password: password.value },
         })
+        await refreshSession()
+        // const { loggedIn } = useUserSession() // TODO: login cookie refresh
+        await navigateTo( '/')
 
-        await navigateTo(route.query.redirect as string || '/')
     } catch (err: any) {
+        console.error('login failed:', err)
         errorMessage.value = err?.data?.message || 'Неверный логин или пароль'
     } finally {
         isSubmitting.value = false
