@@ -17,6 +17,8 @@ const history = useHistory()
 
 store.init()
 
+definePageMeta({ middleware: 'auth' })
+
 const note = computed(() => store.getNoteById(route.params.id as string))
 const noteExists = computed(() => note.value !== undefined)
 
